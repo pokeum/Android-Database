@@ -34,7 +34,6 @@ public class DevicesOpenHelper extends SQLiteOpenHelper {
     private DevicesOpenHelper(Context context) {
         super(context, DB_NAME, null, SCHEMA_VERSION);
         this.context = context;
-        Log.d(TAG, "DevicesOpenHelper(Context context)");
     }
 
     @Override
