@@ -12,19 +12,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class DevicesOpenHelper extends SQLiteOpenHelper {
+public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
-    private static final String TAG = DevicesOpenHelper.class.getSimpleName();
+    private static final String TAG = DatabaseOpenHelper.class.getSimpleName();
     private static final int SCHEMA_VERSION = 1;
-    private static final String DB_NAME = "devices.db";
+    private static final String DB_NAME = "database.db";
 
     private final Context context;
 
-    private static DevicesOpenHelper instance;
+    private static DatabaseOpenHelper instance;
 
-    public synchronized static DevicesOpenHelper getInstance(Context context) {
+    public synchronized static DatabaseOpenHelper getInstance(Context context) {
         if (instance == null) {
-            instance = new DevicesOpenHelper(context.getApplicationContext());
+            instance = new DatabaseOpenHelper(context.getApplicationContext());
         }
         return instance;
     }
@@ -33,7 +33,7 @@ public class DevicesOpenHelper extends SQLiteOpenHelper {
      * 간단한 OpenHelper 인스턴스를 생성
      * @param context 에셋(assets)을 읽기 위한 Context.
      */
-    private DevicesOpenHelper(Context context) {
+    private DatabaseOpenHelper(Context context) {
         super(context, DB_NAME, null, SCHEMA_VERSION);
         this.context = context;
     }
@@ -50,7 +50,6 @@ public class DevicesOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "onCreate(SQLiteDatabase db)");
         for (int i = 1; i <= SCHEMA_VERSION; i++) {
             applySqlFile(db, i);
         }

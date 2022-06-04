@@ -1,4 +1,4 @@
-package com.example.android_database;
+package com.example.android_database.activity.temp;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

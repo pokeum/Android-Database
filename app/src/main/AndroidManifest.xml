@@ -11,7 +11,7 @@
         android:theme="@style/Theme.Chapter04">
         <activity
             android:exported="true"
-            android:name="com.example.android_database.MainActivity">
+            android:name="com.example.android_database.activity.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
