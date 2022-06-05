@@ -1,16 +1,20 @@
 package com.example.android_database.database;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import com.example.android_database.BuildConfig;
+import com.example.android_database.model.People;
 import com.example.android_database.provider.DatabaseOpenHelper;
+
+import java.util.ArrayList;
 
 public class PeopleTable {
 
     private static final String TAG = PeopleTable.class.getSimpleName();
-    private static final String TABLE = "people";
+    public static final String TABLE_NAME = "people";
 
     public enum Column {
         ID("id"),
@@ -38,7 +42,7 @@ public class PeopleTable {
 
         SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
         try {
-            db.insertWithOnConflict(TABLE, null, contentValues, SQLiteDatabase.CONFLICT_ABORT);
+            db.insertWithOnConflict(TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLiteException e) {
             if (BuildConfig.DEBUG) { Log.d(TAG, e.getMessage()); }
         } finally {
@@ -54,7 +58,7 @@ public class PeopleTable {
         contentValues.put(Column.FIRST_NAME.key, firstName);
 
         SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
-        db.update(TABLE, contentValues,
+        db.update(TABLE_NAME, contentValues,
                 Column.ID.key + " = ? OR " + Column.LAST_NAME.key + " = ?",
                 new String[] { "1", "Hoffman" });
         db.close();
@@ -71,14 +75,14 @@ public class PeopleTable {
         contentValues.put(Column.FIRST_NAME.key, firstName);
 
         SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
-        db.replace(TABLE, null, contentValues);
+        db.replace(TABLE_NAME, null, contentValues);
         db.close();
     }
 
     /** 테이블에서 Row 삭제하기 */
     public void delete(int id) {
         SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
-        db.delete(TABLE, "id = ?", new String[] { Integer.toString(id) });
+        db.delete(TABLE_NAME, "id = ?", new String[] { Integer.toString(id) });
         db.close();
     }
 
@@ -98,5 +102,42 @@ public class PeopleTable {
             db.endTransaction();
             db.close();
         }
+    }
+
+    /** Query */
+    public ArrayList<People> simpleQuery() {
+
+        ArrayList<People> peopleList = new ArrayList<>();
+
+        SQLiteDatabase db = databaseOpenHelper.getReadableDatabase();
+
+        String[] columns = { Column.FIRST_NAME.key, Column.LAST_NAME.key, Column.ID.key };
+
+        Cursor cursor = db.query(TABLE_NAME, columns,
+                null, null,
+                null,
+                null,
+                null);
+
+        while (cursor.moveToNext()) {
+            int index;
+            try {
+                index = cursor.getColumnIndexOrThrow(Column.FIRST_NAME.key);
+                String firstName = cursor.getString(index);
+
+                index = cursor.getColumnIndexOrThrow(Column.LAST_NAME.key);
+                String lastName = cursor.getString(index);
+
+                index = cursor.getColumnIndexOrThrow(Column.ID.key);
+                int id = cursor.getInt(index);
+
+                peopleList.add(new People(id, firstName, lastName));
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, e.getMessage());
+                break;
+            }
+        }
+        cursor.close();
+        return peopleList;
     }
 }

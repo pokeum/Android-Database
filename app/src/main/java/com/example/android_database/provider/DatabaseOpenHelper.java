@@ -43,7 +43,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public void onConfigure(SQLiteDatabase db) {
         super.onConfigure(db);
 
-        // write-ahead-log와 외래키를 활성화한다.
+        // WAL(write-ahead-log)과 외래키를 활성화한다.
         setWriteAheadLoggingEnabled(true);
         db.setForeignKeyConstraintsEnabled(true);
     }

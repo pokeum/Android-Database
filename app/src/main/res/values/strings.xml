@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Android Database</string>
+    <string name="init">초기화</string>
+    <string name="insert">입력</string>
+    <string name="select">조회</string>
+    <string name="delete">데이터 삭제</string>
+    <string name="edit">데이터 변경</string>
+    <string name="input_name">이름:</string>
+    <string name="input_number">인원:</string>
+    <string name="put_id">ID:</string>
+    <string name="put_first_name">First Name:</string>
+    <string name="put_last_name">Last Name:</string>
 </resources>
