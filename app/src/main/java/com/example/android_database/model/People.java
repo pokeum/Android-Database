@@ -2,7 +2,7 @@ package com.example.android_database.model;
 
 import androidx.annotation.Nullable;
 
-import com.example.android_database.database.PeopleTable;
+import com.example.android_database.throwable.PeopleException;
 
 public class People {
 
@@ -10,10 +10,12 @@ public class People {
     @Nullable private String firstName;
     @Nullable private String lastName;
 
-    public People(int id, String firstName, String lastName) {
+    public People(int id, String firstName, String lastName) throws PeopleException {
         this.id = id;
         this.firstName = trimAndEmptyToNull(firstName);
         this.lastName = trimAndEmptyToNull(lastName);
+
+        if (isEmptyPerson()) { throw new PeopleException("first name and last name can't all be null"); }
     }
 
     public int getId() { return id; }
@@ -26,13 +28,6 @@ public class People {
         if (firstName != null && lastName != null) { sb.append(' '); }
         if (lastName != null) { sb.append(lastName); }
         return sb.toString();
-    }
-
-    public boolean insert(PeopleTable table) {
-        if (!isEmptyPerson()) {
-            table.insert(id, firstName, lastName);
-            return true;
-        } else { return false; }
     }
 
     private boolean isEmptyPerson() { return firstName == null && lastName == null; }

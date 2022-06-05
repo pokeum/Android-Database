@@ -1,7 +1,6 @@
 package com.example.android_database.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +11,7 @@ import com.example.android_database.model.People;
 import com.example.android_database.provider.DatabaseOpenHelper;
 import com.example.android_database.databinding.ActivityMainBinding;
 import com.example.android_database.databinding.DatabasePeopleRowBinding;
+import com.example.android_database.throwable.PeopleException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,14 +35,15 @@ public class MainActivity extends AppCompatActivity {
         for (People people: peopleTable.simpleQuery()) { addPeopleRow(people); }
 
         mainBinding.btnInsert.setOnClickListener(view -> {
-            People people = new People(temp_id,
-                    mainBinding.edtFirstName.getText().toString(),
-                    mainBinding.edtLastName.getText().toString());
-            if (people.insert(peopleTable)) {
+            try {
+                peopleTable.insert(new People(temp_id,
+                                mainBinding.edtFirstName.getText().toString(),
+                                mainBinding.edtLastName.getText().toString()));
                 temp_id++;
                 shortToast("데이터 저장");
-            } else { shortToast("데이터를 입력해주세요."); }
-            initPeopleInsertField();
+            } catch (PeopleException e) {
+                shortToast("데이터를 입력해주세요.");
+            } finally { initPeopleInsertField(); }
         });
     }
 
@@ -72,12 +73,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void deletePeopleRow(int id) { peopleTable.delete(id); }
 
+    public void editPeopleRow(People people) {
+        peopleTable.update(people);
+        //peopleTable.replace(people);
+    }
+
     private void initPeopleInsertField() {
         mainBinding.edtFirstName.setText("");
         mainBinding.edtLastName.setText("");
     }
 
-    private void shortToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
+    private void shortToast(String msg) { Toast.makeText(this, msg, Toast.LENGTH_SHORT).show(); }
 }

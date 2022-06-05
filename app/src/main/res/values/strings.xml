@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Android Database</string>
+    <string name="permission_description_read_database">Allows apps to read database</string>
+    <string name="permission_description_write_database">Allows apps to write database</string>
     <string name="init">초기화</string>
     <string name="insert">입력</string>
     <string name="select">조회</string>

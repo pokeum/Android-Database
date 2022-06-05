@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android_database">
 
+    <permission
+        android:name="com.example.android_database.provider.READ_DATABASE"
+        android:description="@string/permission_description_read_database" />
+    <permission
+        android:name="com.example.android_database.provider.WRITE_DATABASE"
+        android:description="@string/permission_description_write_database" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +16,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Chapter04">
+
+        <provider
+            android:authorities="${applicationId}.provider"
+            android:name=".provider.DatabaseProvider"
+            android:exported="true"
+            android:syncable="true"
+            android:readPermission="com.example.android_database.provider.READ_DATABASE"
+            android:writePermission="com.example.android_database.provider.WRITE_DATABASE" />
+
         <activity
             android:exported="true"
             android:name="com.example.android_database.activity.MainActivity" >

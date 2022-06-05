@@ -8,6 +8,7 @@ import android.util.Log;
 import com.example.android_database.BuildConfig;
 import com.example.android_database.model.People;
 import com.example.android_database.provider.DatabaseOpenHelper;
+import com.example.android_database.throwable.PeopleException;
 
 import java.util.ArrayList;
 
@@ -34,11 +35,11 @@ public class PeopleTable {
     }
 
     /** 테이블에 Row 삽입하기 */
-    public void insert(int id, String firstName, String lastName) {
+    public void insert(People people) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Column.ID.key, id);
-        contentValues.put(Column.FIRST_NAME.key, firstName);
-        contentValues.put(Column.LAST_NAME.key, lastName);
+        contentValues.put(Column.ID.key, people.getId());
+        contentValues.put(Column.FIRST_NAME.key, people.getFirstName());
+        contentValues.put(Column.LAST_NAME.key, people.getLastName());
 
         SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
         try {
@@ -51,28 +52,25 @@ public class PeopleTable {
     }
 
     /** 테이블에서 Row 수정하기 */
-    public void update() {
-        String firstName = "Robert";
-
+    public void update(People people) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Column.FIRST_NAME.key, firstName);
+        contentValues.put(Column.FIRST_NAME.key, people.getFirstName());
+        contentValues.put(Column.LAST_NAME.key, people.getLastName());
 
         SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
         db.update(TABLE_NAME, contentValues,
-                Column.ID.key + " = ? OR " + Column.LAST_NAME.key + " = ?",
-                new String[] { "1", "Hoffman" });
+                String.format("%s = ?", Column.ID.key),
+                new String[] { Integer.toString(people.getId()) });
         db.close();
     }
 
     /** 테이블에서 Row 치환하기 */
     // INSERT OR REPLACE : 테이블에 로우가 존재하지 않으면 삽입하고, 존재한다면 수정한다.
-    public void replace() {
-        int id = 1;
-        String firstName = "Robert";
-
+    public void replace(People people) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Column.ID.key, id);
-        contentValues.put(Column.FIRST_NAME.key, firstName);
+        contentValues.put(Column.ID.key, people.getId());
+        contentValues.put(Column.FIRST_NAME.key, people.getFirstName());
+        contentValues.put(Column.LAST_NAME.key, people.getLastName());
 
         SQLiteDatabase db = databaseOpenHelper.getWritableDatabase();
         db.replace(TABLE_NAME, null, contentValues);
@@ -132,6 +130,8 @@ public class PeopleTable {
                 int id = cursor.getInt(index);
 
                 peopleList.add(new People(id, firstName, lastName));
+            } catch (PeopleException e) {
+                Log.e(TAG, e.getMessage());
             } catch (IllegalArgumentException e) {
                 Log.e(TAG, e.getMessage());
                 break;
