@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseOpenHelper databaseOpenHelper;
     private PeopleTable peopleTable;
 
-    private int temp_id = 1;
+    private int nextID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +32,18 @@ public class MainActivity extends AppCompatActivity {
         databaseOpenHelper = DatabaseOpenHelper.getInstance(this);
         peopleTable = new PeopleTable(databaseOpenHelper);
 
-        for (People people: peopleTable.simpleQuery()) { addPeopleRow(people); }
+        for (People people: peopleTable.queryAll()) {
+            addPeopleRow(people);
+            nextID = people.getId() + 1;
+        }
 
         mainBinding.btnInsert.setOnClickListener(view -> {
             try {
-                peopleTable.insert(new People(temp_id,
+                peopleTable.insert(new People(nextID,
                                 mainBinding.edtFirstName.getText().toString(),
                                 mainBinding.edtLastName.getText().toString()));
-                temp_id++;
+                nextID ++;
+                redrawUI();
                 shortToast("데이터 저장");
             } catch (PeopleException e) {
                 shortToast("데이터를 입력해주세요.");
@@ -71,16 +75,26 @@ public class MainActivity extends AppCompatActivity {
         mainBinding.scrollBox.addView(rowBinding.getRoot());
     }
 
-    public void deletePeopleRow(int id) { peopleTable.delete(id); }
+    public void deletePeopleRow(int id) {
+        peopleTable.delete(id);
+        redrawUI();
+    }
 
     public void editPeopleRow(People people) {
         peopleTable.update(people);
         //peopleTable.replace(people);
+        redrawUI();
     }
 
     private void initPeopleInsertField() {
         mainBinding.edtFirstName.setText("");
         mainBinding.edtLastName.setText("");
+    }
+
+    private void redrawUI() {
+        mainBinding.scrollBox.removeAllViews();
+        addPeopleRowDescription();
+        for (People people: peopleTable.queryAll()) { addPeopleRow(people); }
     }
 
     private void shortToast(String msg) { Toast.makeText(this, msg, Toast.LENGTH_SHORT).show(); }

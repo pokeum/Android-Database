@@ -103,7 +103,7 @@ public class PeopleTable {
     }
 
     /** Query */
-    public ArrayList<People> simpleQuery() {
+    public ArrayList<People> queryAll() {
 
         ArrayList<People> peopleList = new ArrayList<>();
 
@@ -115,7 +115,7 @@ public class PeopleTable {
                 null, null,
                 null,
                 null,
-                null);
+                Column.ID.key + " ASC");    // DESC
 
         while (cursor.moveToNext()) {
             int index;
